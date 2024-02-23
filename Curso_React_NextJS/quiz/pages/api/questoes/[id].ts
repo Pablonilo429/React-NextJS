@@ -13,7 +13,7 @@ export default function handler(
     
     if(unicaQuestaoOuNada.length === 1){
         const questaoSelecionada = unicaQuestaoOuNada[0].embaralharRespostas()
-        const obj = questaoSelecionada.responderCom(0).toObject()
+        const obj = questaoSelecionada.toObject()
         res.status(200).json(obj)
         
     }else{
