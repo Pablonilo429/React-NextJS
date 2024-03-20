@@ -61,28 +61,45 @@ export function AuthProvider(props){
     }
 
     async function loginGoogle(){
-        const resp = await firebase.auth().signInWithPopup(
-            new firebase.auth.GoogleAuthProvider()
-        )
-        
-        configurarSessao(resp.user)
-        route.push("/")
+        try{
+            setCarregando(true)
+            const resp = await firebase.auth().signInWithPopup(
+                new firebase.auth.GoogleAuthProvider()
+            )
+            
+            configurarSessao(resp.user)
+            route.push("/")
+        }finally{
+            setCarregando(false)
+        }
+    }
+
+    async function logout(){
+        try{
+            setCarregando(true)
+            await firebase.auth().signOut()
+            await configurarSessao(null)
+        } finally{
+            setCarregando(false)
+        }
     }
 
     useEffect(() => {
-        if(Cookies.get('admin-template-cod3r-auth')) {
+        if(Cookies.get('admin-template-auth')){
             const cancelar = firebase.auth().onIdTokenChanged(configurarSessao)
             return () => cancelar()
         } else {
             setCarregando(false)
         }
-
+        
     }, [])
 
     return(
         <AuthContext.Provider value={{
             usuario,
-            loginGoogle
+            carregando,
+            loginGoogle,
+            logout
         }}>
             {props.children}
         </AuthContext.Provider>
